@@ -84,7 +84,7 @@ function ComposeProjectCard({ project }: { project: ComposeProject }) {
                 {net.containers.length > 0 && (
                   <div className="mt-2 flex flex-col gap-1 pl-5">
                     {net.containers.map((ct) => (
-                      <div key={ct.mac} className="flex items-center gap-3 text-xs text-zinc-500">
+                      <div key={ct.name} className="flex items-center gap-3 text-xs text-zinc-500">
                         <span className="text-zinc-400 font-medium">{ct.name}</span>
                         <span className="font-mono">{ct.ipv4 || "—"}</span>
                       </div>

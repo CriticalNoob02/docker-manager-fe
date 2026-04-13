@@ -3,7 +3,6 @@ import { api } from "@/core/apis/api";
 export interface ComposeNetworkContainer {
   name: string;
   ipv4: string;
-  mac: string;
 }
 
 export interface ComposeNetwork {

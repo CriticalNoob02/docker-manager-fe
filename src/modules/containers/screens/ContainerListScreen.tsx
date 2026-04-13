@@ -37,7 +37,7 @@ export function ContainerListScreen() {
       {isError && (
         <div className="rounded-lg border border-red-800/40 bg-red-900/10 px-4 py-3 text-sm text-red-400">
           Não foi possível conectar à API. Verifique se o backend está rodando em{" "}
-          <code className="font-mono">http://localhost:3001</code>.
+          <code className="font-mono">{process.env.NEXT_PUBLIC_API_URL}</code>.
         </div>
       )}
 

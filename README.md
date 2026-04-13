@@ -186,7 +186,7 @@ Dashboard de visão geral com atualização automática a cada 10 segundos:
 
 ## Configuração da API
 
-A base URL da API é configurada em `src/core/apis/api.ts`. Por padrão aponta para `http://localhost:8089`. Para alterar, crie um `.env.local`:
+A base URL da API é configurada em `src/core/apis/api.ts`. Por padrão aponta para `http://localhost:8089`. Para alterar, crie um `.env`:
 
 ```env
 NEXT_PUBLIC_API_URL=http://seu-host:3030
