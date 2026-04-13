@@ -1,4 +1,4 @@
-# radar-docker-manager-fe
+# docker-manager-fe
 
 Interface web para gerenciamento local de containers Docker. Consome a API do **docker-manager-ms**.
 
