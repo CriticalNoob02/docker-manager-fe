@@ -1,36 +1,195 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# radar-docker-manager-fe
 
-## Getting Started
+Interface web para gerenciamento local de containers Docker. Consome a API do **docker-manager-ms**.
 
-First, run the development server:
+## Stack
+
+| Tecnologia | Papel |
+|---|---|
+| Next.js 15 (App Router) + Turbopack | Framework React com SSR/RSC |
+| React 19 | UI |
+| TailwindCSS v4 | Estilização |
+| TanStack Query v5 | Cache e fetching de dados REST |
+| Socket.io Client | Streams em tempo real |
+| Recharts | Gráficos de CPU e memória |
+| XY Flow (React Flow) | Visualização e editor de grafos Compose |
+| Radix UI | Primitivos acessíveis (Dialog, DropdownMenu, Toast, etc.) |
+| Zustand | Estado global |
+| Lucide React | Ícones |
+| date-fns | Formatação de datas |
+
+## Pré-requisitos
+
+- Node.js 20+
+- **docker-manager-ms** rodando em `http://localhost:8089`
+
+## Instalação e execução
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+yarn install
+yarn run dev     # Next.js com Turbopack (hot-reload)
+yarn run build   # Build de produção
+yarn start       # Serve o build de produção
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+A interface sobe na porta **3030** por padrão.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Estrutura
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                        # Rotas Next.js (App Router)
+│   ├── layout.tsx              # Layout raiz (providers, sidebar)
+│   ├── page.tsx                # Redireciona para /containers
+│   ├── containers/
+│   │   ├── page.tsx
+│   │   └── [id]/
+│   │       ├── logs/page.tsx
+│   │       └── stats/page.tsx
+│   ├── images/page.tsx
+│   ├── volumes/page.tsx
+│   ├── networks/page.tsx
+│   ├── compose/
+│   │   ├── page.tsx
+│   │   └── builder/page.tsx
+│   └── metrics/page.tsx
+│
+├── core/
+│   ├── apis/api.ts             # Instância axios (base URL do MS)
+│   ├── config/socket.ts        # Configuração Socket.io cliente
+│   └── providers/
+│       ├── index.tsx           # Composição de todos os providers
+│       ├── ReactQueryProvider.tsx
+│       ├── SocketContext.tsx   # Contexto do socket /docker
+│       ├── ThemeProvider.tsx
+│       └── ToastProvider.tsx
+│
+├── modules/                    # Features por domínio
+│   ├── containers/
+│   │   ├── components/
+│   │   │   ├── ContainerTable.tsx       # Tabela com TanStack Table
+│   │   │   ├── ContainerActionsMenu.tsx # Dropdown start/stop/restart/remove
+│   │   │   ├── ContainerStatusBadge.tsx
+│   │   │   ├── DescriptionCell.tsx      # Edição inline de descrição
+│   │   │   ├── LogViewer.tsx            # Viewer de logs em tempo real
+│   │   │   └── StatsChart.tsx           # Gráficos CPU e memória (Recharts)
+│   │   ├── hooks/
+│   │   │   ├── useContainers.ts         # Lista com polling 30s
+│   │   │   ├── useContainerAction.ts    # Mutações start/stop/restart/remove
+│   │   │   ├── useContainerLogs.ts      # Subscrição socket logs
+│   │   │   └── useContainerStats.ts     # Subscrição socket stats
+│   │   └── screens/
+│   │       ├── ContainerListScreen.tsx
+│   │       ├── ContainerLogsScreen.tsx
+│   │       └── ContainerStatsScreen.tsx
+│   │
+│   ├── images/
+│   │   ├── components/
+│   │   │   ├── ImageTable.tsx
+│   │   │   └── PullImageModal.tsx       # Pull com progresso em tempo real
+│   │   ├── hooks/
+│   │   │   ├── useImages.ts
+│   │   │   └── usePullImage.ts          # Eventos socket pull
+│   │   └── screens/ImageListScreen.tsx
+│   │
+│   ├── volumes/
+│   │   ├── components/
+│   │   │   ├── VolumeTable.tsx
+│   │   │   └── CreateVolumeModal.tsx
+│   │   ├── hooks/useVolumes.ts
+│   │   └── screens/VolumeListScreen.tsx
+│   │
+│   ├── networks/
+│   │   ├── components/
+│   │   │   ├── NetworkTable.tsx
+│   │   │   └── CreateNetworkModal.tsx
+│   │   ├── hooks/useNetworks.ts
+│   │   └── screens/NetworkListScreen.tsx
+│   │
+│   ├── compose/
+│   │   ├── components/
+│   │   │   ├── ComposeGraph.tsx          # Grafo interativo do stack
+│   │   │   ├── ServiceNode.tsx / VolumeNode.tsx / BuilderNode.tsx
+│   │   │   ├── BuilderEdge.tsx
+│   │   │   ├── FlowBuilder.tsx           # Editor drag-and-drop
+│   │   │   ├── FlowCanvas.tsx
+│   │   │   ├── NodeEditPanel.tsx
+│   │   │   ├── StackSelector.tsx
+│   │   │   ├── ContainerPanel.tsx
+│   │   │   └── GraphLegend.tsx
+│   │   ├── hooks/
+│   │   │   ├── useComposeStacks.ts
+│   │   │   └── useComposeGraph.ts
+│   │   ├── lib/
+│   │   │   ├── layout.ts                # Auto-layout com dagre
+│   │   │   └── exportCompose.ts         # Exporta grafo → docker-compose.yml
+│   │   └── screens/
+│   │       ├── ComposeScreen.tsx
+│   │       └── ComposeBuilderScreen.tsx
+│   │
+│   └── metrics/
+│       ├── hooks/useMetrics.ts          # Polling 10s
+│       └── screens/MetricsScreen.tsx
+│
+└── shared/
+    ├── components/
+    │   ├── ConfirmDialog.tsx
+    │   └── layout/
+    │       ├── AppShell.tsx             # Wrapper com Sidebar
+    │       └── Sidebar.tsx              # Navegação lateral
+    ├── constants/queryKeys.ts           # Enum das query keys do React Query
+    ├── hooks/useToast.ts
+    └── services/                        # Camada de acesso à API
+        ├── containers.ts
+        ├── images.ts
+        ├── volumes.ts
+        ├── networks.ts
+        ├── compose.ts
+        └── metrics.ts
+```
 
-## Learn More
+## Funcionalidades
 
-To learn more about Next.js, take a look at the following resources:
+### Containers
+- Listagem completa (running e stopped) com status em tempo real via eventos Docker
+- Ações individuais: iniciar, parar, reiniciar, remover
+- Descrição customizada editável inline (persistida no backend)
+- **Logs em tempo real** via WebSocket — buffer dos últimos 200 logs com auto-scroll
+- **Stats em tempo real** via WebSocket — gráficos de CPU (%) e Memória (MB) com histórico de 60 pontos
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Images
+- Listagem com tamanho e data de criação
+- Remoção de imagens
+- **Pull com progresso em tempo real** — exibe cada layer sendo baixada/extraída via eventos do socket
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Volumes
+- Listagem com driver e mountpoint
+- Criação com nome e driver customizáveis
+- Remoção
 
-## Deploy on Vercel
+### Redes
+- Listagem com driver e escopo
+- Criação com nome e driver (bridge, host, overlay, etc.)
+- Remoção
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Compose
+- **Visualizador**: seleciona um stack ativo e renderiza um grafo interativo (XY Flow) com serviços, volumes e dependências. Nós exibem o status do container em tempo real.
+- **Builder**: editor visual drag-and-drop para criar stacks do zero — adiciona serviços, conecta dependências, edita propriedades no painel lateral e exporta o arquivo `docker-compose.yml`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Métricas
+Dashboard de visão geral com atualização automática a cada 10 segundos:
+
+- **Containers**: total, rodando e parados
+- **Recursos** (agregado dos containers ativos): CPU total (%), memória (uso + limite), IO de bloco (leitura e escrita), rede (RX e TX)
+- **Armazenamento**: tamanho total de imagens e containers
+- **Redes do Compose**: agrupadas por projeto, com cada rede, seu driver e os containers conectados com seus IPs
+
+## Configuração da API
+
+A base URL da API é configurada em `src/core/apis/api.ts`. Por padrão aponta para `http://localhost:8089`. Para alterar, crie um `.env.local`:
+
+```env
+NEXT_PUBLIC_API_URL=http://seu-host:3030
+```
+
+E atualize `api.ts` para usar `process.env.NEXT_PUBLIC_API_URL`.
