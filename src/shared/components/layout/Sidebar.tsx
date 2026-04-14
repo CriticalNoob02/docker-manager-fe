@@ -11,12 +11,14 @@ import {
   GitFork,
   Workflow,
   BarChart2,
+  BookOpen,
 } from "lucide-react";
 import clsx from "clsx";
 import { useDockerSocket } from "@/core/providers/SocketContext";
+import { useLearnModeStore } from "@/shared/stores/learnModeStore";
 
 const navItems = [
-    { href: "/metrics", label: "Métricas", icon: BarChart2 },
+  { href: "/metrics", label: "Métricas", icon: BarChart2 },
   { href: "/containers", label: "Containers", icon: Container },
   { href: "/images", label: "Images", icon: Image },
   { href: "/volumes", label: "Volumes", icon: HardDrive },
@@ -31,6 +33,7 @@ const composeItems = [
 export function Sidebar() {
   const pathname = usePathname();
   const { isConnected } = useDockerSocket();
+  const { learnMode, toggleLearnMode } = useLearnModeStore();
 
   function isActive(href: string, exact: boolean) {
     return exact ? pathname === href : pathname.startsWith(href);
@@ -80,6 +83,52 @@ export function Sidebar() {
               {label}
             </Link>
           ))}
+        </div>
+
+        {/* Learn group */}
+        <div className="mt-1">
+          <p className="px-3 py-1 text-[10px] font-semibold text-zinc-600 uppercase tracking-widest">
+            Aprender
+          </p>
+
+          {/* Link para a página /learn */}
+          <Link
+            href="/learn"
+            className={clsx(
+              "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+              pathname.startsWith("/learn")
+                ? "bg-blue-600 text-white"
+                : "text-zinc-400 hover:text-white hover:bg-zinc-800"
+            )}
+          >
+            <BookOpen className="w-4 h-4" />
+            Docker 101
+          </Link>
+
+          {/* Toggle Learn Mode */}
+          <button
+            onClick={toggleLearnMode}
+            className={clsx(
+              "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors w-full text-left",
+              learnMode
+                ? "text-blue-300 bg-blue-950/40"
+                : "text-zinc-400 hover:text-white hover:bg-zinc-800"
+            )}
+            title="Ativa caixas de explicação em cada tela"
+          >
+            {/* Ícone de toggle */}
+            <span
+              className={clsx(
+                "inline-flex items-center justify-center w-4 h-4 rounded-sm border text-[9px] font-bold transition-colors",
+                learnMode
+                  ? "border-blue-500 bg-blue-600 text-white"
+                  : "border-zinc-600 text-zinc-600"
+              )}
+            >
+              {learnMode ? "ON" : ""}
+            </span>
+            Modo Ensino
+          </button>
         </div>
       </nav>
 

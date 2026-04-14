@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useVolumes } from "../hooks/useVolumes";
 import { VolumeTable } from "../components/VolumeTable";
 import { CreateVolumeModal } from "../components/CreateVolumeModal";
+import { DockerInfoBox, InfoCommand } from "@/shared/components/DockerInfoBox";
 import { Plus, RefreshCw } from "lucide-react";
 
 export function VolumeListScreen() {
@@ -12,6 +13,18 @@ export function VolumeListScreen() {
 
   return (
     <div className="flex flex-col gap-6">
+      <DockerInfoBox
+        conceptSlug="volume"
+        title="O que são Volumes?"
+        summary="Volumes são mecanismo nativo do Docker para persistir dados fora do ciclo de vida dos containers. Remova e recrie o container — os dados continuam intactos no volume."
+        details={
+          <div className="flex flex-col gap-2">
+            <InfoCommand cmd="docker volume create meu-db" desc="Cria um volume chamado meu-db" />
+            <InfoCommand cmd="docker run -v meu-db:/var/lib/postgresql/data postgres" desc="Monta o volume no diretório de dados do Postgres" />
+            <InfoCommand cmd="docker volume prune" desc="Remove todos os volumes não usados por nenhum container" />
+          </div>
+        }
+      />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-white">Volumes</h1>

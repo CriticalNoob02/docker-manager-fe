@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useImages } from "../hooks/useImages";
 import { ImageTable } from "../components/ImageTable";
 import { PullImageModal } from "../components/PullImageModal";
+import { DockerInfoBox, InfoCommand } from "@/shared/components/DockerInfoBox";
 import { Download, RefreshCw } from "lucide-react";
 
 export function ImageListScreen() {
@@ -12,6 +13,18 @@ export function ImageListScreen() {
 
   return (
     <div className="flex flex-col gap-6">
+      <DockerInfoBox
+        conceptSlug="image"
+        title="O que são Images?"
+        summary="Images são templates somente-leitura em camadas (layers). Cada instrução do Dockerfile cria uma camada. Camadas são compartilhadas entre imagens — economizando espaço e tempo de download."
+        details={
+          <div className="flex flex-col gap-2">
+            <InfoCommand cmd="docker pull postgres:16-alpine" desc="Baixa a imagem do Postgres versão 16 com base alpine (menor)" />
+            <InfoCommand cmd="docker image history <id>" desc="Mostra todas as camadas e seus tamanhos" />
+            <InfoCommand cmd="docker image prune" desc="Remove imagens sem tag (restos de builds anteriores)" />
+          </div>
+        }
+      />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-white">Images</h1>

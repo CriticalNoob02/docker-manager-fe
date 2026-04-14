@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useNetworks } from "../hooks/useNetworks";
 import { NetworkTable } from "../components/NetworkTable";
 import { CreateNetworkModal } from "../components/CreateNetworkModal";
+import { DockerInfoBox, InfoCommand } from "@/shared/components/DockerInfoBox";
 import { Plus, RefreshCw } from "lucide-react";
 
 export function NetworkListScreen() {
@@ -12,6 +13,18 @@ export function NetworkListScreen() {
 
   return (
     <div className="flex flex-col gap-6">
+      <DockerInfoBox
+        conceptSlug="network"
+        title="O que são Redes Docker?"
+        summary="Redes Docker são switches virtuais que conectam containers. Containers na mesma rede bridge customizada se resolvem por nome (DNS interno). Containers em redes diferentes ficam isolados por padrão."
+        details={
+          <div className="flex flex-col gap-2">
+            <InfoCommand cmd="docker network create --driver bridge minha-rede" desc="Cria uma rede bridge customizada" />
+            <InfoCommand cmd="docker network connect minha-rede <container>" desc="Conecta um container a uma rede existente" />
+            <InfoCommand cmd="docker network inspect minha-rede" desc="Mostra containers conectados, IPs e configurações" />
+          </div>
+        }
+      />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-white">Redes</h1>

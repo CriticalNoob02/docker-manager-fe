@@ -8,6 +8,7 @@ import { applyDagreLayout } from "../lib/layout";
 import { ComposeGraph } from "../components/ComposeGraph";
 import { GraphLegend } from "../components/GraphLegend";
 import { StackSelector } from "../components/StackSelector";
+import { DockerInfoBox } from "@/shared/components/DockerInfoBox";
 import type { ServiceNode, GraphEdge } from "@/shared/services/compose";
 
 function toFlowNodes(apiNodes: ServiceNode[]): Node[] {
@@ -57,6 +58,11 @@ export function ComposeScreen() {
   return (
     // Same height convention as ContainerLogsScreen: 100vh minus main's p-6 (3rem = 48px)
     <div className="flex flex-col gap-3 h-[calc(100vh-3rem)]">
+      <DockerInfoBox
+        conceptSlug="compose"
+        title="O que é Docker Compose?"
+        summary="O Compose descreve toda a infraestrutura (serviços, redes, volumes) num arquivo YAML. Este grafo visualiza as dependências entre serviços, volumes e como eles se conectam. Cada nó é um serviço; as arestas mostram depends_on e volumes compartilhados."
+      />
       {/* Topbar */}
       <div className="flex items-center gap-4 shrink-0">
         <StackSelector stacks={stacks} value={selectedFile} onChange={setSelectedFile} />

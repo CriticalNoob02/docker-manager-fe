@@ -1,6 +1,7 @@
 "use client";
 
 import { useMetrics } from "../hooks/useMetrics";
+import { DockerInfoBox } from "@/shared/components/DockerInfoBox";
 import { RefreshCw, Box, Cpu, MemoryStick, HardDrive, ArrowDownToLine, ArrowUpFromLine, Network, Layers } from "lucide-react";
 import type { ComposeProject } from "@/shared/services/metrics";
 
@@ -117,6 +118,18 @@ export function MetricsScreen() {
 
   return (
     <div className="flex flex-col gap-6">
+      <DockerInfoBox
+        conceptSlug="docker-socket"
+        title="Como essas métricas são coletadas?"
+        summary="Este app se conecta ao Docker Socket (/var/run/docker.sock) via Dockerode e lê os stats de cada container em execução. O cálculo de CPU usa os deltas entre dois samples consecutivos de cpu_stats."
+        details={
+          <p className="text-xs text-zinc-400 leading-relaxed">
+            A fórmula de CPU% é: <code className="font-mono text-emerald-400">((cpuDelta / systemDelta) × numCPUs × 100)</code>.
+            O systemDelta é a diferença do tempo total de CPU do host entre dois snapshots. Memória é lida de{" "}
+            <code className="font-mono text-emerald-400">memory_stats.usage</code> do payload de stats do Docker.
+          </p>
+        }
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

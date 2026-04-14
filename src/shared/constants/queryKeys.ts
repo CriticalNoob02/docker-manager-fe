@@ -7,4 +7,8 @@ export enum EQuery {
   COMPOSE_STACKS = "compose-stacks",
   COMPOSE_GRAPH = "compose-graph",
   METRICS = "metrics",
+  LEARN_CONCEPTS = "learn-concepts",
+  LEARN_CONCEPT = "learn-concept",
+  LEARN_QUIZ = "learn-quiz",
+  LEARN_CONTEXT = "learn-context",
 }
