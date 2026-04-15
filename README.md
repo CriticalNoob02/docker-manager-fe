@@ -173,8 +173,47 @@ src/
 - Remoção
 
 ### Compose
-- **Visualizador**: seleciona um stack ativo e renderiza um grafo interativo (XY Flow) com serviços, volumes e dependências. Nós exibem o status do container em tempo real.
-- **Builder**: editor visual drag-and-drop para criar stacks do zero — adiciona serviços, conecta dependências, edita propriedades no painel lateral e exporta o arquivo `docker-compose.yml`.
+
+#### Visualizador
+Seleciona um stack ativo e renderiza um grafo interativo (XY Flow) com serviços, volumes e dependências. Nós exibem o status do container em tempo real.
+
+#### Builder
+Editor visual drag-and-drop para criar stacks do zero. Exporta `docker-compose.yml` válido.
+
+**Campos suportados por serviço:**
+
+| Seção | Campo | Compose key |
+|---|---|---|
+| Básico | Nome do serviço | `services.<name>:` |
+| Básico | Imagem | `image` |
+| Básico | Portas | `ports` |
+| Básico | Variáveis de ambiente | `environment` |
+| Básico | Volumes | `volumes` |
+| Básico | Command | `command` |
+| Deployment | Build Context | `build` |
+| Deployment | Profiles | `profiles` |
+| Deployment | Restart Policy | `restart` (`no` / `always` / `unless-stopped` / `on-failure`) |
+| Deployment | Container Name | `container_name` |
+| Deployment | Hostname | `hostname` |
+| Labels | Labels Docker | `labels` |
+| Healthcheck | Test command | `healthcheck.test` |
+| Healthcheck | Interval / Timeout / Retries / Start Period | `healthcheck.*` |
+| Deploy | Replicas | `deploy.replicas` |
+| Deploy | Memory Limit | `deploy.resources.limits.memory` |
+| Deploy | CPUs | `deploy.resources.limits.cpus` |
+
+**Relações entre serviços (arestas):**
+
+| Cor | Tipo | Efeito no YAML |
+|---|---|---|
+| Azul sólido | `depends_on` | `depends_on: [target]` |
+| Verde tracejado | `network` | Cria/junta rede compartilhada |
+| Amarelo pontilhado | `env_ref` | `depends_on` semântico |
+
+> Clique na label de uma aresta para ciclar entre os tipos de relação.
+
+**Profiles:**  
+Preencha o campo *Profiles* na seção **Deployment** do painel lateral com um perfil por linha. O YAML gerado incluirá `profiles: [...]` no serviço. Para ativar um perfil ao subir o stack: `docker compose --profile dev up`.
 
 ### Métricas
 Dashboard de visão geral com atualização automática a cada 10 segundos:
