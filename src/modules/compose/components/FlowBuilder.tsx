@@ -55,14 +55,25 @@ function BuilderInner() {
     partial: Partial<BuilderNodeData>
   ): Node {
     const data: BuilderNodeData = {
-      name:        partial.name        ?? `service-${counter.current}`,
-      image:       partial.image       ?? "",
-      ports:       partial.ports       ?? [],
-      environment: partial.environment ?? [],
-      volumes:     partial.volumes     ?? [],
-      command:     partial.command     ?? "",
-      containerId: partial.containerId,
-      onEdit:      (nid) => setEditingId(nid),
+      // Basic
+      name:          partial.name        ?? `service-${counter.current}`,
+      image:         partial.image       ?? "",
+      ports:         partial.ports       ?? [],
+      environment:   partial.environment ?? [],
+      volumes:       partial.volumes     ?? [],
+      command:       partial.command     ?? "",
+      // Advanced
+      build:         partial.build         ?? "",
+      profiles:      partial.profiles      ?? [],
+      restart:       partial.restart       ?? "",
+      containerName: partial.containerName ?? "",
+      hostname:      partial.hostname      ?? "",
+      labels:        partial.labels        ?? [],
+      healthcheck:   partial.healthcheck   ?? { test: "", interval: "30s", timeout: "10s", retries: "3", startPeriod: "" },
+      deploy:        partial.deploy        ?? { replicas: "", memLimit: "", cpus: "" },
+      // Internal
+      containerId:   partial.containerId,
+      onEdit:        (nid) => setEditingId(nid),
     };
     return { id, type: "builder", position, data: data as unknown as Record<string, unknown> };
   }

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { containersService } from "@/shared/services/containers";
+import { containersService, type CreateContainerPayload } from "@/shared/services/containers";
 import { EQuery } from "@/shared/constants/queryKeys";
 
 export function useContainers() {
@@ -7,6 +7,14 @@ export function useContainers() {
     queryKey: [EQuery.CONTAINERS],
     queryFn: containersService.list,
     refetchInterval: 30_000,
+  });
+}
+
+export function useCreateContainer() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: CreateContainerPayload) => containersService.create(payload),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [EQuery.CONTAINERS] }),
   });
 }
 
