@@ -11,4 +11,10 @@ export enum EQuery {
   LEARN_CONCEPT = "learn-concept",
   LEARN_QUIZ = "learn-quiz",
   LEARN_CONTEXT = "learn-context",
+  SWARM_INFO = "swarm-info",
+  SWARM_NODES = "swarm-nodes",
+  SWARM_SERVICES = "swarm-services",
+  SWARM_SERVICE_DETAIL = "swarm-service-detail",
+  SWARM_TASKS = "swarm-tasks",
+  SWARM_STACKS = "swarm-stacks",
 }

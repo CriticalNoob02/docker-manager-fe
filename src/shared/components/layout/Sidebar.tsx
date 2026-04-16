@@ -12,10 +12,13 @@ import {
   Workflow,
   BarChart2,
   BookOpen,
+  Boxes,
+  Server,
 } from "lucide-react";
 import clsx from "clsx";
 import { useDockerSocket } from "@/core/providers/SocketContext";
 import { useLearnModeStore } from "@/shared/stores/learnModeStore";
+import { useSwarmInfo } from "@/modules/swarm/hooks/useSwarm";
 
 const navItems = [
   { href: "/metrics", label: "Métricas", icon: BarChart2 },
@@ -30,10 +33,18 @@ const composeItems = [
   { href: "/compose/builder", label: "Builder", icon: Workflow, exact: false },
 ];
 
+const swarmItems = [
+  { href: "/swarm", label: "Overview", icon: Activity, exact: true },
+  { href: "/swarm/nodes", label: "Nodes", icon: Server, exact: false },
+  { href: "/swarm/services", label: "Serviços", icon: Boxes, exact: false },
+];
+
 export function Sidebar() {
   const pathname = usePathname();
   const { isConnected } = useDockerSocket();
   const { learnMode, toggleLearnMode } = useLearnModeStore();
+  const { data: swarmInfo } = useSwarmInfo();
+  const swarmActive = !!swarmInfo?.id;
 
   function isActive(href: string, exact: boolean) {
     return exact ? pathname === href : pathname.startsWith(href);
@@ -62,6 +73,45 @@ export function Sidebar() {
             {label}
           </Link>
         ))}
+
+        {/* Swarm group — always visible; sub-items only when active */}
+        <div className="mt-1">
+          <p className="px-3 py-1 text-[10px] font-semibold text-zinc-600 uppercase tracking-widest flex items-center gap-1.5">
+            Swarm
+            {!swarmActive && (
+              <span className="text-[9px] px-1 py-0.5 rounded bg-zinc-800 text-zinc-600 border border-zinc-700">off</span>
+            )}
+          </p>
+          {/* Overview always shown */}
+          <Link
+            href="/swarm"
+            className={clsx(
+              "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+              isActive("/swarm", true)
+                ? "bg-blue-600 text-white"
+                : "text-zinc-400 hover:text-white hover:bg-zinc-800"
+            )}
+          >
+            <Activity className="w-4 h-4" />
+            Overview
+          </Link>
+          {/* Sub-items only when swarm is active */}
+          {swarmActive && swarmItems.slice(1).map(({ href, label, icon: Icon, exact }) => (
+            <Link
+              key={href}
+              href={href}
+              className={clsx(
+                "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                isActive(href, exact)
+                  ? "bg-blue-600 text-white"
+                  : "text-zinc-400 hover:text-white hover:bg-zinc-800"
+              )}
+            >
+              <Icon className="w-4 h-4" />
+              {label}
+            </Link>
+          ))}
+        </div>
 
         {/* Compose group */}
         <div className="mt-1">
